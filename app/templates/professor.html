@@ -1,0 +1,74 @@
+{% extends "base.html" %}{% block head %}<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css">{% endblock %}
+{% block body %}
+<div class="mb-5"><div class="faixa"><b>Pastor</b><span>&Aacute;rea do Pastor<br>Igreja Batista Nova Betel</span></div></div>
+<div class="grid grid-cols-3 gap-3 sm:gap-4 mb-6">
+<div class="card"><div class="display text-3xl sm:text-4xl" style="color:var(--olive-d)">{{ total }}</div>acessos</div>
+<div class="card"><div class="display text-3xl sm:text-4xl" style="color:var(--leaf)">{{ unicos }}</div>pessoas &uacute;nicas</div>
+<a href="#perguntas" class="card card-link"><div class="display text-3xl sm:text-4xl" style="color:var(--heart)">{{ pendentes|length }}</div>perguntas aguardando</a></div>
+
+<h2 class="text-2xl mb-2">Quem est&aacute; assistindo</h2>
+<div id="map" class="moldura mb-2 z-0" style="height:26rem"></div>
+<p class="text-sm mb-6 opacity-80">Cada marcador mostra o nome e o local de quem acessou. Clique para ver os detalhes.</p>
+
+<section id="perguntas" class="mb-8">
+<h2 class="text-2xl mb-2">Perguntas dos irm&atilde;os {% if pendentes %}<span class="bolinha" style="font-size:.9rem;min-width:1.6rem;height:1.6rem">{{ pendentes|length }}</span>{% endif %}</h2>
+<div class="space-y-4">{% for p in pendentes %}
+<form method="post" action="/professor/pergunta/{{ p.id }}/responder" class="card space-y-2">
+<div class="flex flex-wrap gap-x-2 gap-y-1 items-center"><b class="display text-lg">{{ p.usuario.nome }}</b><span class="text-sm opacity-80">&middot; {{ endereco(p.usuario) }}</span></div>
+<div class="text-xs font-bold">Sobre: <a class="link" href="/aula/{{ p.aula_id }}">{{ p.aula.titulo }}</a> &middot; {{ p.criada_em|hora }}</div>
+<div class="balao balao-aluno">{{ p.texto }}</div>
+<textarea name="resposta" required maxlength="4000" placeholder="Escreva sua resposta..." class="input"></textarea>
+<button class="btn">Responder</button></form>
+{% else %}<p class="card">Nenhuma pergunta aguardando resposta. &#127807;</p>{% endfor %}</div>
+{% if respondidas %}<details class="mt-4"><summary class="cursor-pointer link">Ver perguntas j&aacute; respondidas ({{ respondidas|length }})</summary>
+<div class="space-y-3 mt-3">{% for p in respondidas %}<div class="card">
+<div class="text-sm"><b>{{ p.usuario.nome }}</b> &middot; <a class="link" href="/aula/{{ p.aula_id }}">{{ p.aula.titulo }}</a> &middot; {{ p.criada_em|hora }}</div>
+<div class="balao balao-aluno mt-2">{{ p.texto }}</div>
+<div class="balao balao-pastor mt-2 ml-6"><div class="text-xs font-bold mb-1" style="color:var(--olive-d)">{{ p.respondida_por.nome if p.respondida_por else 'Pastor' }} &middot; {{ p.respondida_em|hora }}</div>{{ p.resposta }}</div></div>{% endfor %}</div></details>{% endif %}
+</section>
+
+<form method="post" action="/professor/aula" enctype="multipart/form-data" onsubmit="document.getElementById('conteudo').value=q.root.innerHTML" class="card space-y-2 mb-6">
+<h2 class="text-2xl">Publicar aula / culto</h2>
+<input name="titulo" placeholder="T&iacute;tulo" required class="input">
+<textarea name="descricao" placeholder="Descri&ccedil;&atilde;o" class="input"></textarea>
+<label class="block text-sm font-bold">Conte&uacute;do (texto para leitura, abaixo do v&iacute;deo)</label>
+<div id="editor" style="height:220px"></div><textarea name="conteudo" id="conteudo" class="hidden"></textarea>
+<div class="flex gap-2"><select name="curso_id" class="input" style="width:auto">{% for c in cursos %}<option value="{{ c.id }}">{{ c.titulo }}</option>{% endfor %}</select>
+<select name="tipo" class="input" style="width:auto"><option value="aula">Aula</option><option value="culto">Culto</option></select></div>
+<input name="video_url" placeholder="Link (YouTube, Vimeo...) OU envie arquivo abaixo" class="input">
+<input type="file" name="arquivo" accept=".mp4,.webm" class="text-sm">
+<div><button class="btn">Publicar</button></div></form>
+
+<h2 class="text-2xl mb-2">Conte&uacute;dos</h2>
+<div class="card divide-beit mb-6 !p-0">{% for a in aulas %}<form method="post" action="/professor/aula/{{ a.id }}/toggle" class="p-3 flex justify-between items-center gap-2">
+<span>{{ a.titulo }} <small class="opacity-70">({{ a.tipo }} &middot; {{ a.curso.titulo }})</small></span>
+<button class="btn btn-sm {{ '' if a.ativa else 'btn-sec' }}">{{ 'Ativa' if a.ativa else 'Inativa' }}</button></form>{% else %}<p class="p-3">Nada publicado ainda.</p>{% endfor %}</div>
+
+<h2 class="text-2xl mb-2">&Uacute;ltimos acessos</h2>
+<div class="card !p-0 overflow-x-auto"><table class="tab"><tr><th>Quem</th><th>Endere&ccedil;o</th><th>Conte&uacute;do</th><th>Quando</th></tr>
+{% for l in recentes %}<tr><td><b>{{ l.usuario.nome }}</b></td><td>{{ endereco(l.usuario) }}</td><td>{{ l.aula.titulo }}</td><td>{{ l.acessado_em|hora('%d/%m %H:%M') }}</td></tr>{% endfor %}</table></div>
+
+<script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+<script>const q=new Quill('#editor',{theme:'snow',placeholder:'Escreva o texto da aula...',modules:{toolbar:[[{font:[]},{size:['small',false,'large','huge']}],[{header:[1,2,3,false]}],['bold','italic','underline','strike'],[{color:[]},{background:[]}],[{align:[]}],[{list:'ordered'},{list:'bullet'}],['blockquote','link','clean']]}});</script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const m=L.map('map').setView([-14.2,-51.9],4);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(m);
+const pin=L.divIcon({className:'',iconSize:[30,38],iconAnchor:[15,36],popupAnchor:[0,-32],tooltipAnchor:[16,-18],
+ html:'<svg viewBox="0 0 30 38" width="30" height="38"><path d="M15 36C6 24 3 18 3 13a12 12 0 0 1 24 0c0 5-3 11-12 23z" fill="#8a9a3b" stroke="#4a3426" stroke-width="2.4"/><path d="M15 21c-5-3.6-6.6-6.3-6.6-8.4a3.7 3.7 0 0 1 6.6-2.2 3.7 3.7 0 0 1 6.6 2.2c0 2.1-1.6 4.8-6.6 8.4z" fill="#c8453b" stroke="#4a3426" stroke-width="1.2"/></svg>'});
+fetch('/api/v1/admin/mapa').then(r=>r.json()).then(ps=>{
+  // agrupa pessoas que moram no mesmo ponto
+  const g={};ps.forEach(p=>{(g[p.lat+','+p.lng]=g[p.lat+','+p.lng]||[]).push(p)});
+  const b=[];
+  Object.values(g).forEach(arr=>{
+    const p0=arr[0], first=arr[0].nome.split(' ')[0];
+    const rotulo=esc(first)+(arr.length>1?' +'+(arr.length-1):'');
+    const html=arr.map(p=>`<div style="margin:.15rem 0"><b>${esc(p.nome)}</b><br><span style="opacity:.85">${esc(p.local)}</span><br><small>${p.acessos} acesso(s)${p.ultimo?' &middot; &uacute;ltimo em '+esc(p.ultimo):''}</small></div>`).join('<hr style="border-top:1px dashed #4a3426;margin:.35rem 0">');
+    L.marker([p0.lat,p0.lng],{icon:pin}).addTo(m).bindPopup(html,{maxHeight:240}).bindTooltip(rotulo,{permanent:true,direction:'right',offset:[0,0]});
+    b.push([p0.lat,p0.lng]);
+  });
+  if(b.length)m.fitBounds(b,{maxZoom:12,padding:[40,40]});
+});
+</script>
+{% endblock %}

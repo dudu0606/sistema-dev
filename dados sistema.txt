@@ -1,0 +1,56 @@
+Key: POSTGRES_USER | Value: app_user
+
+Key: POSTGRES_PASSWORD | Value: 123qwe!#
+
+Key: POSTGRES_DB | Value: mini_aulas_db
+
+Key: SECRET_KEY | Value: sahsjkahsjkahsjkahsjkanmsfdjfdsfjsljfklsdjflsvmismvksjviosmvkmvddffggggggg
+
+Todos os 9 recursos foram criados. Agora falta o build terminar e os pods subirem.
+
+1. Acompanhe o build
+Vá em Builds → BuildConfigs → sistema-dev-app → aba Builds.
+
+Se já houver um build Running, espere (1 a 3 minutos) até ele ficar Complete.
+Se não houver nenhum build, clique em Actions → Start build.
+Se o build falhar (Failed), abra a aba Logs dele e me mande as últimas linhas.
+
+2. Confira os pods
+Vá em Workloads → Pods:
+
+sistema-dev-db-... deve ficar Running e 1/1. Se estiver em CreateContainerConfigError, o secret sistema-dev-secrets está com nome ou chave errados.
+sistema-dev-app-... fica em ImagePullBackOff até o build terminar, depois sobe sozinho. É normal.
+
+3. Acesse o sistema
+Em Networking → Routes → sistema-dev, clique na URL (coluna Location). Entre com admin@sistema.dev / admin123, a menos que você tenha definido ADMIN_EMAIL e ADMIN_PASSWORD no secret.
+
+4. Primeiros passos
+
+Em /admin, crie um curso e promova um usuário a professor.
+Em /professor, publique uma aula com um link do YouTube para testar.
+Cadastre um aluno em /cadastrar com cidade/UF, assista à aula e veja o ponto aparecer no mapa do professor.
+
+Se algum pod ficar com erro, me mande o status e a mensagem em Pod → Events ou Logs.
+
+funcionou, agora quero criar conta, ela funciona como adm?
+
+Explaining how admin accounts are created and promoted.
+
+Não. Quem se cadastra em /cadastrar entra sempre como aluno, para que ninguém consiga se promover sozinho. Quem dá permissão é o admin.
+
+Para ter sua própria conta de admin
+
+Crie sua conta em /cadastrar (nome, e-mail, senha e cidade/UF).
+Entre com o admin inicial, admin@sistema.dev / admin123.
+Em /admin, na lista Usuários e perfis, ache sua conta, escolha admin (ou professor) e clique em Salvar.
+Saia e entre com a sua conta. Ela vai abrir direto no painel do perfil novo.
+
+Troque o admin padrão
+A senha admin123 é pública, já que está no código no seu Git, e o sistema está na internet. Enquanto você não trocar, qualquer um pode entrar como admin. Como o sistema ainda não tem tela de troca de senha, faça assim:
+
+Depois de promover sua conta a admin, entre com ela.
+Em /admin, rebaixe admin@sistema.dev para aluno.
+
+A conta antiga continua existindo, mas sem poder nenhum.
+
+Se preferir, também dá para adicionar ADMIN_EMAIL e ADMIN_PASSWORD ao secret e reiniciar o pod. O sistema cria então um admin novo com esses dados, e você rebaixa o antigo do mesmo jeito.

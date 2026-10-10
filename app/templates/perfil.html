@@ -1,0 +1,5 @@
+{% extends "base.html" %}{% block body %}
+<form method="post" action="/perfil" class="card max-w-md mx-auto space-y-3">
+<h1 class="titulo-beit titulo-pagina">Meu endere&ccedil;o</h1>{% if ok %}<p class="text-sm font-bold" style="color:var(--leaf)">Endere&ccedil;o atualizado!</p>{% endif %}
+{% include "_endereco.html" %}
+<button class="btn w-full">Salvar</button></form>{% endblock %}

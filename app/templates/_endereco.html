@@ -1,0 +1,6 @@
+<div class="flex gap-2"><input name="rua" placeholder="Rua / Avenida" required value="{{ (u.rua or '') if u else '' }}" class="input flex-1">
+<input name="numero" placeholder="N&ordm;" value="{{ (u.numero or '') if u else '' }}" class="input" style="width:5rem"></div>
+<input name="bairro" placeholder="Bairro" required value="{{ (u.bairro or '') if u else '' }}" class="input">
+<div class="flex gap-2"><input name="cidade" placeholder="Cidade" required value="{{ u.cidade if u else '' }}" class="input flex-1">
+<input name="uf" placeholder="UF" maxlength="2" required value="{{ u.uf if u else '' }}" class="input uppercase" style="width:4rem"></div>
+<p class="text-xs opacity-80">Seu endere&ccedil;o &eacute; usado para o mapa de audi&ecirc;ncia e fica vis&iacute;vel ao pastor.</p>

@@ -1,0 +1,90 @@
+/* Beit - visual inspirado nas ilustracoes da Igreja Batista Nova Betel:
+   papel creme aquarelado, verde-oliva, areia, coracao vermelho e contornos marrom-escuros. */
+:root{
+  --paper:#fbf3e4; --paper2:#f4e6cc; --sand:#e8c9a0; --tan:#c9915a;
+  --brown:#4a3426; --ink:#2b2118; --olive:#8a9a3b; --olive-d:#6b7a28;
+  --leaf:#4f8a4b; --heart:#c8453b; --sky:#a9c4e0;
+  --shadow:4px 4px 0 rgba(74,52,38,.18);
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Nunito',system-ui,sans-serif; color:var(--brown); background-color:var(--paper);
+  background-image:
+    radial-gradient(60rem 30rem at 0% 0%, rgba(232,201,160,.55), transparent 60%),
+    radial-gradient(50rem 28rem at 100% 12%, rgba(138,154,59,.16), transparent 62%),
+    radial-gradient(55rem 30rem at 50% 100%, rgba(232,201,160,.45), transparent 60%);
+  background-attachment:fixed;
+}
+h1,h2,h3,.display{font-family:'Lilita One','Nunito',sans-serif;letter-spacing:.01em}
+
+/* titulo grande estilo "NOVA BETEL": verde-oliva com contorno marrom */
+.titulo-beit{
+  font-family:'Lilita One',sans-serif; color:var(--olive); text-transform:uppercase;
+  -webkit-text-stroke:2.5px var(--brown); paint-order:stroke fill; line-height:1;
+  text-shadow:3px 3px 0 rgba(74,52,38,.2);
+}
+.titulo-pagina{font-size:clamp(1.9rem,5vw,2.8rem)}
+
+/* cartoes com contorno de caneta e sombra de papel */
+.card{background:#fffaf0;border:2px solid var(--brown);border-radius:1.1rem;box-shadow:var(--shadow);padding:1.25rem}
+.card-link{display:block;transition:transform .15s,box-shadow .15s}
+.card-link:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 rgba(74,52,38,.22)}
+.card h2{color:var(--brown)}
+
+.input{width:100%;background:#fffdf7;border:2px solid var(--brown);border-radius:.75rem;padding:.55rem .8rem;color:var(--ink);outline:none}
+.input::placeholder{color:#9b8672}
+.input:focus{border-color:var(--olive-d);box-shadow:0 0 0 3px rgba(138,154,59,.35)}
+textarea.input{min-height:5.5rem}
+
+.btn{display:inline-block;background:var(--olive);color:#fff;border:2px solid var(--brown);border-radius:.8rem;
+  padding:.5rem 1.1rem;font-family:'Lilita One',sans-serif;letter-spacing:.03em;cursor:pointer;
+  box-shadow:3px 3px 0 var(--brown);transition:transform .1s,box-shadow .1s;text-shadow:1px 1px 0 rgba(43,33,24,.45)}
+.btn:hover{transform:translate(1px,1px);box-shadow:2px 2px 0 var(--brown)}
+.btn:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--brown)}
+.btn-sec{background:var(--sand);color:var(--brown);text-shadow:none}
+.btn-red{background:var(--heart)}
+.btn-sm{padding:.25rem .75rem;font-size:.9rem}
+
+.link{color:var(--olive-d);font-weight:800;text-decoration:underline;text-underline-offset:3px}
+.link:hover{color:var(--heart)}
+
+/* barra superior */
+.topbar{background:var(--paper);border-bottom:3px solid var(--brown);position:relative}
+.topbar::after{content:"";position:absolute;left:0;right:0;bottom:-9px;height:6px;
+  background:repeating-linear-gradient(90deg,var(--olive) 0 28px,var(--sand) 28px 56px);opacity:.85}
+.navlink{position:relative;padding:.3rem .7rem;border-radius:.7rem;font-weight:800;color:var(--brown);border:2px solid transparent}
+.navlink:hover{background:var(--sand);border-color:var(--brown)}
+.navlink.ativo{background:var(--olive);color:#fff;border-color:var(--brown);text-shadow:1px 1px 0 rgba(43,33,24,.4)}
+.bolinha{display:inline-grid;place-items:center;min-width:1.25rem;height:1.25rem;padding:0 .3rem;margin-left:.3rem;
+  border-radius:999px;background:var(--heart);color:#fff;font-size:.72rem;font-weight:800;border:1.5px solid var(--brown)}
+
+/* faixa estilo "PASTOR | IGREJA BATISTA NOVA BETEL" */
+.faixa{display:inline-flex;align-items:stretch;border:2px solid var(--brown);box-shadow:var(--shadow);
+  clip-path:polygon(0 0,100% 6%,98% 100%,2% 94%);background:var(--sand)}
+.faixa b{font-family:'Lilita One',sans-serif;font-weight:400;padding:.5rem 1.4rem .5rem 1.8rem;text-transform:uppercase;
+  color:var(--heart);-webkit-text-stroke:1px var(--brown);paint-order:stroke fill;font-size:clamp(1.6rem,4vw,2.3rem);line-height:1}
+.faixa span{background:var(--olive);color:#fff;padding:.5rem 1.8rem .5rem 1.2rem;font-family:'Lilita One',sans-serif;
+  text-transform:uppercase;display:grid;align-items:center;font-size:clamp(.85rem,2vw,1.05rem);line-height:1.1;text-shadow:1px 1px 0 var(--brown)}
+
+.moldura{border:3px solid var(--brown);border-radius:1.2rem;box-shadow:var(--shadow);overflow:hidden;background:var(--paper2)}
+.etiqueta{display:inline-block;background:var(--sand);border:1.5px solid var(--brown);border-radius:999px;
+  padding:.05rem .65rem;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--brown)}
+.etiqueta.verde{background:var(--olive);color:#fff}
+.etiqueta.verm{background:var(--heart);color:#fff}
+
+table.tab{width:100%;border-collapse:separate;border-spacing:0;font-size:.9rem}
+table.tab th{background:var(--sand);text-align:left;padding:.5rem .7rem;border-bottom:2px solid var(--brown);font-family:'Lilita One',sans-serif;font-weight:400}
+table.tab td{padding:.5rem .7rem;border-bottom:1px dashed rgba(74,52,38,.35)}
+.divide-beit>*+*{border-top:1.5px dashed rgba(74,52,38,.4)}
+
+.balao{border:2px solid var(--brown);border-radius:1rem;padding:.7rem .9rem;white-space:pre-line;overflow-wrap:anywhere}
+.balao-aluno{background:#fff;border-bottom-left-radius:.2rem}
+.balao-pastor{background:#eef0d2;border-bottom-right-radius:.2rem}
+.leaflet-popup-content-wrapper{border:2px solid var(--brown);border-radius:.9rem;background:#fffaf0;color:var(--brown)}
+.leaflet-popup-tip{background:#fffaf0;border:1px solid var(--brown)}
+.ql-snow .ql-editor a{color:var(--olive-d)}
+.ql-toolbar.ql-snow,.ql-container.ql-snow{border:2px solid var(--brown)!important;background:#fffdf7}
+.ql-toolbar.ql-snow{border-radius:.75rem .75rem 0 0}.ql-container.ql-snow{border-radius:0 0 .75rem .75rem;border-top:0!important}
+::selection{background:var(--olive);color:#fff}
+.leaflet-tooltip{background:#fffaf0;border:2px solid var(--brown);border-radius:.6rem;color:var(--brown);font-weight:800;box-shadow:2px 2px 0 rgba(74,52,38,.2)}
+.leaflet-tooltip-right:before{border-right-color:var(--brown)}

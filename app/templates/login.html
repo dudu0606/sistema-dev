@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% block body %}
+<div class="grid md:grid-cols-2 gap-6 items-center">
+<div class="moldura order-2 md:order-1"><img src="/static/img/pastores.jpg" alt="Pastores da Igreja Batista Nova Betel" class="w-full h-auto block"></div>
+<form method="post" action="/login" class="card space-y-3 order-1 md:order-2">
+<h1 class="titulo-beit titulo-pagina">Bem-vindo</h1>
+<p class="text-sm">Entre para assistir &agrave;s aulas e cultos da nossa igreja.</p>
+{% if erro %}<p class="text-sm font-bold" style="color:var(--heart)">{{ erro }}</p>{% endif %}
+<input name="email" type="email" placeholder="E-mail" required class="input">
+<input name="senha" type="password" placeholder="Senha" required class="input">
+<button class="btn w-full">Entrar</button>
+<a href="/cadastrar" class="link text-sm">Criar conta</a></form></div>{% endblock %}

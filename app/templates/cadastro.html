@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% block body %}
+<div class="grid md:grid-cols-2 gap-6 items-center">
+<div class="moldura hidden md:block"><img src="/static/img/pastor.jpg" alt="Pastor da Igreja Batista Nova Betel" class="w-full h-auto block"></div>
+<form method="post" action="/cadastrar" class="card space-y-3">
+<h1 class="titulo-beit titulo-pagina">Cadastro</h1>{% if erro %}<p class="text-sm font-bold" style="color:var(--heart)">{{ erro }}</p>{% endif %}
+<input name="nome" placeholder="Nome" required class="input">
+<input name="email" type="email" placeholder="E-mail" required class="input">
+<input name="senha" type="password" placeholder="Senha (m&iacute;n. 6)" required class="input">
+{% include "_endereco.html" %}
+<button class="btn w-full">Cadastrar</button>
+<a href="/login" class="link text-sm">J&aacute; tenho conta</a></form></div>{% endblock %}

@@ -1,0 +1,8 @@
+{% extends "base.html" %}{% block body %}
+<div class="moldura mb-6 relative"><img src="/static/img/pastores.jpg" alt="" class="w-full block object-cover" style="max-height:19rem;object-position:50% 35%"></div>
+<h1 class="titulo-beit titulo-pagina mb-4">Aulas e cultos</h1>
+<div class="grid md:grid-cols-2 gap-4">{% for a in aulas %}
+<a href="/aula/{{ a.id }}" class="card card-link">
+<span class="etiqueta {{ 'verm' if a.tipo == 'culto' else 'verde' }}">{{ a.tipo }}</span> <span class="text-xs font-bold opacity-80">{{ a.curso.titulo }}</span>
+<h2 class="text-xl mt-1">{{ a.titulo }}</h2><p class="text-sm opacity-90">{{ a.descricao }}</p></a>
+{% else %}<p class="card md:col-span-2">Nenhuma aula publicada ainda.</p>{% endfor %}</div>{% endblock %}

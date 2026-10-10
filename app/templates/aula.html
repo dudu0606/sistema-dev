@@ -1,0 +1,27 @@
+{% extends "base.html" %}{% block head %}<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css">
+<style>.ql-editor h1,.ql-editor h2,.ql-editor h3{font-weight:bold}.ql-editor a{text-decoration:underline}</style>{% endblock %}
+{% block body %}{% set v = embed(aula.video_url) %}
+<a href="/portal" class="link text-sm">&larr; Todas as aulas</a>
+<h1 class="titulo-beit titulo-pagina mt-1">{{ aula.titulo }}</h1><p class="mb-4 mt-2">{{ aula.descricao }}</p>
+<div class="moldura" style="background:#000">
+{% if v.kind == 'video' %}<video id="v" src="{{ v.src }}" controls class="w-full bg-black block"></video>
+{% else %}<iframe src="{{ v.src }}" class="w-full aspect-video block" allowfullscreen allow="autoplay; encrypted-media"></iframe>{% endif %}</div>
+{% if aula.conteudo %}<section class="card mt-8"><h2 class="text-2xl mb-3">Conte&uacute;do</h2>
+<div class="ql-snow"><div class="ql-editor" style="height:auto;overflow:visible;padding:0">{{ aula.conteudo|safe }}</div></div></section>{% endif %}
+
+<section id="perguntas" class="card mt-8">
+<h2 class="text-2xl mb-1">Pergunte ao Pastor</h2>
+<p class="text-sm mb-3">Ficou com alguma d&uacute;vida sobre esta aula? Envie sua pergunta. O pastor responde quando entrar na &Aacute;rea do Pastor &mdash; n&atilde;o &eacute; em tempo real. Volte aqui (ou em <a class="link" href="/minhas-perguntas">Minhas perguntas</a>) para ver a resposta.</p>
+{% if request.query_params.get('enviada') %}<p class="text-sm font-bold mb-3" style="color:var(--leaf)">&#10003; Pergunta enviada! Aguarde a resposta do pastor.</p>{% endif %}
+<form method="post" action="/aula/{{ aula.id }}/pergunta" class="space-y-2">
+<textarea name="texto" required maxlength="2000" placeholder="Escreva sua pergunta sobre esta aula..." class="input"></textarea>
+<button class="btn">Enviar pergunta</button></form>
+{% if perguntas %}<h3 class="text-lg mt-6 mb-2">Suas perguntas nesta aula</h3><div class="space-y-4">
+{% for p in perguntas %}<div>
+<div class="balao balao-aluno"><div class="text-xs font-bold opacity-70 mb-1">Voc&ecirc; &middot; {{ p.criada_em|hora }}</div>{{ p.texto }}</div>
+{% if p.resposta %}<div class="balao balao-pastor mt-2 ml-6"><div class="text-xs font-bold mb-1" style="color:var(--olive-d)">{{ p.respondida_por.nome if p.respondida_por else "Pastor" }} &middot; {{ p.respondida_em|hora }}</div>{{ p.resposta }}</div>
+{% else %}<p class="mt-2 ml-6 text-sm"><span class="etiqueta">Aguardando resposta</span></p>{% endif %}</div>{% endfor %}</div>{% endif %}
+</section>
+<script>let r=0;function reg(){if(r)return;r=1;fetch('/api/v1/aulas/{{ aula.id }}/play',{method:'POST'});}
+{% if v.kind == 'video' %}document.getElementById('v').addEventListener('play',reg);{% else %}reg();{% endif %}</script>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% block body %}
+<h1 class="titulo-beit titulo-pagina mb-4">Administra&ccedil;&atilde;o</h1>
+<form method="post" action="/admin/curso" class="card space-y-2 mb-6">
+<h2 class="text-xl">Lan&ccedil;ar novo curso</h2>
+<input name="titulo" placeholder="Nome do curso" required class="input">
+<textarea name="descricao" placeholder="Descri&ccedil;&atilde;o" class="input"></textarea>
+<button class="btn">Criar curso</button></form>
+<div class="card divide-beit mb-6 !p-0">{% for c in cursos %}<form method="post" action="/admin/curso/{{ c.id }}/toggle" class="p-3 flex justify-between items-center">
+<span>{{ c.titulo }}</span><button class="btn btn-sm btn-sec">{{ 'Ativo (desativar)' if c.ativo else 'Inativo (ativar)' }}</button></form>{% endfor %}</div>
+<h2 class="text-xl mb-2">Usu&aacute;rios e perfis</h2>
+<div class="card divide-beit !p-0">{% for u in usuarios %}
+<form method="post" action="/admin/usuario/{{ u.id }}/perfil" class="p-3 flex flex-wrap gap-2 items-center">
+<span class="flex-1">{{ u.nome }} <small class="opacity-70">{{ u.email }} &middot; {{ u.cidade }}/{{ u.uf }}</small></span>
+<select name="perfil" class="input" style="width:auto">{% for p in ['aluno','professor','admin'] %}<option {{ 'selected' if u.perfil == p }}>{{ p }}</option>{% endfor %}</select>
+<button class="btn btn-sm">Salvar</button></form>{% endfor %}</div>{% endblock %}

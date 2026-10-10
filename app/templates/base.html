@@ -1,0 +1,25 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Beit</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 80'%3E%3Cpath d='M23 4h18v22h19v18H41v32H23V44H4V26h19z' fill='%23fffaf0' stroke='%234f8a4b' stroke-width='5' stroke-linejoin='round'/%3E%3Cpath d='M32 52c-9-7-12-12-12-16a7 7 0 0 1 12-4 7 7 0 0 1 12 4c0 4-3 9-12 16z' fill='%23c8453b'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@400;600;800&display=swap">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={theme:{extend:{colors:{paper:"#fbf3e4",sand:"#e8c9a0",brown:"#4a3426",olive:"#8a9a3b",heart:"#c8453b"}}}}</script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="/static/beit.css">{% block head %}{% endblock %}</head>
+<body class="min-h-screen flex flex-col">
+{% set path = request.url.path %}
+<header class="topbar px-4 sm:px-6 py-2 mb-4">
+<div class="max-w-5xl mx-auto flex flex-wrap gap-x-2 gap-y-1 items-center">
+<a href="/" class="flex items-center gap-2 mr-auto">{% with cls='h-10 w-8' %}{% include "_logo.html" %}{% endwith %}<span class="titulo-beit text-3xl" style="-webkit-text-stroke-width:2px">Beit</span></a>
+{% if user %}<nav class="flex flex-wrap items-center gap-1 text-sm sm:text-base">
+<a href="/portal" class="navlink {{ 'ativo' if path.startswith(('/portal','/aula')) }}">Aulas</a>
+{% if user.perfil == 'aluno' %}<a href="/minhas-perguntas" class="navlink {{ 'ativo' if path.startswith('/minhas-perguntas') }}">Minhas perguntas{% if avisos %}<span class="bolinha" title="Respostas novas do pastor">{{ avisos }}</span>{% endif %}</a>{% endif %}
+{% if user.perfil in ['professor','admin'] %}<a href="/professor" class="navlink {{ 'ativo' if path.startswith('/professor') }}">&Aacute;rea do Pastor{% if avisos %}<span class="bolinha" title="Perguntas aguardando resposta">{{ avisos }}</span>{% endif %}</a>{% endif %}
+{% if user.perfil == 'admin' %}<a href="/admin" class="navlink {{ 'ativo' if path.startswith('/admin') }}">Admin</a>{% endif %}
+<a href="/perfil" class="navlink text-sm" title="Meu endere&ccedil;o">{{ user.nome }}</a><a href="/sair" class="navlink">Sair</a></nav>{% endif %}
+</div></header>
+<main class="max-w-5xl w-full mx-auto px-4 sm:px-6 py-4 flex-1">{% block body %}{% endblock %}</main>
+<footer class="mt-8 py-5 text-center text-sm" style="background:var(--ink);color:#e9dcc2;border-top:4px solid var(--olive)">
+<span class="display" style="color:var(--olive)">Beit</span> &middot; Igreja Batista Nova Betel
+</footer></body></html>

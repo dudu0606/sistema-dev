@@ -1,0 +1,114 @@
+# SISTEMA DEV - cole este arquivo inteiro em: + > Import YAML (project sistema-dev)
+# Requer 1 secret ja existente chamado "sistema-dev-secrets" com as chaves:
+#   POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB, SECRET_KEY
+# (opcionais: ADMIN_EMAIL, ADMIN_PASSWORD)
+# Se o seu secret tem outro nome, troque "sistema-dev-secrets" (4 ocorrencias).
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata: {name: sistema-dev-app, labels: {app: sistema-dev}}
+---
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata: {name: sistema-dev-app, labels: {app: sistema-dev}}
+spec:
+  source:
+    type: Git
+    git: {uri: "https://github.com/dudu0606/sistema-dev.git", ref: main}
+  strategy: {type: Docker, dockerStrategy: {}}
+  output: {to: {kind: ImageStreamTag, name: "sistema-dev-app:latest"}}
+  triggers:
+    - type: ConfigChange
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: {name: sistema-dev-db-pvc, labels: {app: sistema-dev}}
+spec:
+  accessModes: [ReadWriteOnce]
+  resources: {requests: {storage: 5Gi}}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: {name: sistema-dev-uploads-pvc, labels: {app: sistema-dev}}
+spec:
+  accessModes: [ReadWriteOnce]
+  resources: {requests: {storage: 20Gi}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: sistema-dev-db, labels: {app: sistema-dev, component: db}}
+spec:
+  replicas: 1
+  strategy: {type: Recreate}
+  selector: {matchLabels: {app: sistema-dev, component: db}}
+  template:
+    metadata: {labels: {app: sistema-dev, component: db}}
+    spec:
+      containers:
+        - name: postgres
+          image: quay.io/sclorg/postgresql-16-c9s:latest
+          ports: [{containerPort: 5432}]
+          env:
+            - {name: POSTGRESQL_USER, valueFrom: {secretKeyRef: {name: sistema-dev-secrets, key: POSTGRES_USER}}}
+            - {name: POSTGRESQL_PASSWORD, valueFrom: {secretKeyRef: {name: sistema-dev-secrets, key: POSTGRES_PASSWORD}}}
+            - {name: POSTGRESQL_DATABASE, valueFrom: {secretKeyRef: {name: sistema-dev-secrets, key: POSTGRES_DB}}}
+          volumeMounts: [{name: data, mountPath: /var/lib/pgsql/data}]
+          readinessProbe:
+            exec: {command: ["/bin/sh", "-c", "pg_isready -h 127.0.0.1"]}
+            initialDelaySeconds: 10
+          resources: {requests: {cpu: 100m, memory: 256Mi}, limits: {memory: 512Mi}}
+      volumes:
+        - name: data
+          persistentVolumeClaim: {claimName: sistema-dev-db-pvc}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: sistema-dev-db, labels: {app: sistema-dev}}
+spec:
+  selector: {app: sistema-dev, component: db}
+  ports: [{port: 5432, targetPort: 5432}]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sistema-dev-app
+  labels: {app: sistema-dev, component: app}
+  annotations:
+    image.openshift.io/triggers: >-
+      [{"from":{"kind":"ImageStreamTag","name":"sistema-dev-app:latest"},"fieldPath":"spec.template.spec.containers[?(@.name==\"app\")].image"}]
+spec:
+  replicas: 1
+  strategy: {type: Recreate}
+  selector: {matchLabels: {app: sistema-dev, component: app}}
+  template:
+    metadata: {labels: {app: sistema-dev, component: app}}
+    spec:
+      containers:
+        - name: app
+          image: sistema-dev-app:latest
+          ports: [{containerPort: 8000}]
+          envFrom: [{secretRef: {name: sistema-dev-secrets}}]
+          env:
+            - {name: POSTGRES_HOST, value: sistema-dev-db}
+            - {name: UPLOAD_DIR, value: /data/uploads}
+          volumeMounts: [{name: uploads, mountPath: /data/uploads}]
+          readinessProbe: {httpGet: {path: /healthz, port: 8000}, initialDelaySeconds: 10}
+          livenessProbe: {httpGet: {path: /healthz, port: 8000}, initialDelaySeconds: 30}
+          resources: {requests: {cpu: 100m, memory: 128Mi}, limits: {memory: 512Mi}}
+      volumes:
+        - name: uploads
+          persistentVolumeClaim: {claimName: sistema-dev-uploads-pvc}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: sistema-dev, labels: {app: sistema-dev}}
+spec:
+  selector: {app: sistema-dev, component: app}
+  ports: [{name: http, port: 8000, targetPort: 8000}]
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata: {name: sistema-dev, labels: {app: sistema-dev}}
+spec:
+  to: {kind: Service, name: sistema-dev}
+  port: {targetPort: http}
+  tls: {termination: edge, insecureEdgeTerminationPolicy: Redirect}

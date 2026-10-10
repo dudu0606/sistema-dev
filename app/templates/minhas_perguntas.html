@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block body %}
+<h1 class="titulo-beit titulo-pagina mb-2">Minhas perguntas</h1>
+<p class="mb-4 text-sm">Aqui ficam as perguntas que voc&ecirc; fez ao pastor e as respostas dele.</p>
+<div class="space-y-4">{% for p in perguntas %}<div class="card">
+<div class="flex flex-wrap gap-2 items-center mb-2"><a href="/aula/{{ p.aula_id }}#perguntas" class="link">{{ p.aula.titulo }}</a>
+{% if p.resposta %}<span class="etiqueta verde">Respondida</span>{% else %}<span class="etiqueta">Aguardando resposta</span>{% endif %}</div>
+<div class="balao balao-aluno"><div class="text-xs font-bold opacity-70 mb-1">Voc&ecirc; &middot; {{ p.criada_em|hora }}</div>{{ p.texto }}</div>
+{% if p.resposta %}<div class="balao balao-pastor mt-2 ml-6"><div class="text-xs font-bold mb-1" style="color:var(--olive-d)">{{ p.respondida_por.nome if p.respondida_por else "Pastor" }} &middot; {{ p.respondida_em|hora }}</div>{{ p.resposta }}</div>{% endif %}
+</div>{% else %}<p class="card">Voc&ecirc; ainda n&atilde;o fez perguntas. Abra uma <a href="/portal" class="link">aula</a> e use o campo &ldquo;Pergunte ao Pastor&rdquo;.</p>{% endfor %}</div>
+{% endblock %}
