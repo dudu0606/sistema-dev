@@ -12,14 +12,35 @@ from passlib.context import CryptContext
 from sqlalchemy import select, func, text
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Session, joinedload
+
+# --- IMPORTAÇÕES DO OPENTELEMETRY ---
+from opentelemetry import trace
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+
 from .models import (Base, engine, SessionLocal, Usuario, Curso, Aula, LogVisualizacao, Pergunta, now)
+
+# --- INICIALIZAÇÃO PROGRAMÁTICA DO OPENTELEMETRY ---
+provider = TracerProvider()
+processor = BatchSpanProcessor(OTLPSpanExporter())
+provider.add_span_processor(processor)
+trace.set_tracer_provider(provider)
 
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-troque-em-producao")
 UPLOAD_DIR = os.getenv("UPLOAD_DIR", "./uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 pwd = CryptContext(schemes=["bcrypt"], deprecated="auto")
 templates = Jinja2Templates(directory=os.path.join(os.path.dirname(__file__), "templates"))
+
 app = FastAPI(title="Beit")
+
+# --- INSTRUMENTAÇÃO DO FASTAPI E SQLALCHEMY ---
+FastAPIInstrumentor.instrument_app(app)
+SQLAlchemyInstrumentor().instrument(engine=engine)
+
 app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "static")), name="static")
 app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
