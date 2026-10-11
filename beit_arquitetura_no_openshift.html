@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beit - Arquitetura no OpenShift</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .box-glow {
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+        .border-dashed-custom {
+            stroke-dasharray: 6, 6;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen flex flex-col items-center justify-center">
+
+    <div class="mb-4 flex gap-4 no-print">
+        <button onclick="window.print()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2 px-4 rounded-lg shadow transition flex items-center gap-2">
+            <i class="fas fa-print"></i> Salvar como PDF / Imprimir
+        </button>
+    </div>
+
+    <!-- Main Architecture Container -->
+    <div class="w-full max-w-[1200px] bg-[#0b0f19] border border-slate-800 rounded-2xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
+        
+        <!-- Header -->
+        <div class="mb-8 border-b border-slate-800 pb-5">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-amber-400 tracking-tight flex items-center gap-3">
+                Beit <span class="text-slate-500 font-normal">•</span> Arquitetura no OpenShift
+            </h1>
+            <p class="text-slate-400 text-sm md:text-base mt-1">
+                Aulas e cultos online da Igreja Batista Nova Betel - onde cada peça roda
+            </p>
+        </div>
+
+        <!-- Top External Layer (Clients & Internet) -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
+            
+            <!-- Clients Zone -->
+            <div class="md:col-span-5 bg-slate-900/80 border border-amber-500/30 rounded-xl p-4 relative">
+                <span class="absolute -top-3 left-4 bg-amber-500/20 text-amber-300 text-xs font-semibold px-2.5 py-0.5 rounded border border-amber-500/40">
+                    Pessoas no Wi-Fi
+                </span>
+                <div class="flex items-center justify-between mt-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-400 text-lg">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-slate-200">Aluno • Pastor • Admin</div>
+                            <div class="text-xs text-slate-400">no celular ou no PC</div>
+                        </div>
+                    </div>
+                    <i class="fas fa-arrow-right text-amber-400 text-xl hidden sm:block"></i>
+                    <div class="bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-xs">
+                        <div class="font-bold text-slate-300">hosts / DNS</div>
+                        <div class="text-amber-400 font-mono">belt.casa → 192.168.0.50</div>
+                        <div class="text-[10px] text-slate-500">(IP da máquina do CRC)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Internet Zone -->
+            <div class="md:col-span-7 bg-slate-900/80 border border-cyan-500/30 rounded-xl p-4 relative">
+                <span class="absolute -top-3 left-4 bg-cyan-500/20 text-cyan-300 text-xs font-semibold px-2.5 py-0.5 rounded border border-cyan-500/40">
+                    Internet (fora do cluster)
+                </span>
+                <div class="grid grid-cols-3 gap-3 mt-2">
+                    <div class="bg-slate-800/80 border border-slate-700/80 rounded-lg p-2.5 text-center">
+                        <i class="fab fa-youtube text-red-500 text-xl mb-1"></i>
+                        <div class="font-bold text-xs text-slate-200">YouTube</div>
+                        <div class="text-[10px] text-slate-400">Vídeos das aulas</div>
+                    </div>
+                    <div class="bg-slate-800/80 border border-slate-700/80 rounded-lg p-2.5 text-center">
+                        <i class="fas fa-map-marked-alt text-emerald-400 text-xl mb-1"></i>
+                        <div class="font-bold text-xs text-slate-200">OpenStreetMap</div>
+                        <div class="text-[10px] text-slate-400">Endereço vira ponto</div>
+                    </div>
+                    <div class="bg-slate-800/80 border border-slate-700/80 rounded-lg p-2.5 text-center">
+                        <i class="fas fa-cloud-download-alt text-blue-400 text-xl mb-1"></i>
+                        <div class="font-bold text-xs text-slate-200">CDNs</div>
+                        <div class="text-[10px] text-slate-400">Tailwind • Leaflet • Fonts</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- OpenShift Cluster Box -->
+        <div class="border-2 border-purple-600/50 bg-slate-950/60 rounded-2xl p-6 relative mb-8">
+            <span class="absolute -top-3.5 left-6 bg-purple-900/80 text-purple-200 text-xs font-bold px-3 py-1 rounded-full border border-purple-500/50">
+                <i class="fas fa-cubes mr-1"></i> Cluster OpenShift Local (OKD / CRC) - 192.168.0.50
+            </span>
+
+            <!-- Namespace Box -->
+            <div class="border border-purple-500/30 bg-slate-900/40 rounded-xl p-5 mt-2">
+                <div class="text-xs font-semibold text-purple-400 mb-4 tracking-wide uppercase">
+                    Projeto (namespace) <span class="text-purple-300 font-bold">sistema-dev</span>
+                </div>
+
+                <!-- Top CI/CD Flow -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-purple-950/40 border border-purple-800/60 rounded-lg p-3 text-center">
+                        <i class="fab fa-github text-white text-xl mb-1"></i>
+                        <div class="font-bold text-xs text-slate-200">GitHub</div>
+                        <div class="text-[10px] text-slate-400">código • branch main</div>
+                    </div>
+                    <div class="bg-purple-950/40 border border-purple-800/60 rounded-lg p-3 text-center">
+                        <i class="fas fa-cogs text-purple-400 text-xl mb-1"></i>
+                        <div class="font-bold text-xs text-slate-200">BuildConfig</div>
+                        <div class="text-[10px] text-slate-400">monta a imagem (Dockerfile)</div>
+                    </div>
+                    <div class="bg-purple-950/40 border border-purple-800/60 rounded-lg p-3 text-center">
+                        <i class="fas fa-box text-purple-300 text-xl mb-1"></i>
+                        <div class="font-bold text-xs text-slate-200">ImageStream</div>
+                        <div class="text-[10px] text-slate-400">sistema-dev-app:latest</div>
+                    </div>
+                    <div class="bg-slate-900 border border-slate-800 rounded-lg p-3 text-center flex flex-col justify-center">
+                        <div class="font-bold text-xs text-purple-300">Como atualizar o sistema</div>
+                        <div class="text-[10px] text-slate-400 mt-1">push no Git → Start build → o pod novo sobe sozinho</div>
+                    </div>
+                </div>
+
+                <!-- Core Architecture Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                    
+                    <!-- Ingress / Router -->
+                    <div class="md:col-span-3 bg-red-950/30 border border-red-500/40 rounded-lg p-4 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 text-red-400 font-bold text-sm mb-2">
+                                <i class="fas fa-route"></i> Router + Routes
+                            </div>
+                            <div class="text-xs text-slate-300">TLS na borda</div>
+                            <div class="text-xs font-mono text-red-300">belt.casa</div>
+                            <div class="text-[11px] text-slate-400 mt-1">*.apps-crc.testing</div>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-red-900/50 flex justify-between items-center text-xs">
+                            <span class="text-slate-400">Service</span>
+                            <span class="font-mono text-red-300">sistema-dev :8000</span>
+                        </div>
+                    </div>
+
+                    <!-- Main App Box -->
+                    <div class="md:col-span-6 bg-slate-900 border-2 border-amber-500/60 rounded-xl p-5 shadow-lg relative">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-2">
+                                <i class="fab fa-python text-amber-400 text-2xl"></i>
+                                <i class="fas fa-bolt text-teal-400 text-xl"></i>
+                                <div>
+                                    <div class="font-bold text-slate-100 text-sm">App Beit</div>
+                                    <div class="text-[11px] text-amber-400 font-mono">Deployment sistema-dev-app</div>
+                                </div>
+                            </div>
+                            <span class="bg-amber-500/20 text-amber-300 text-[10px] px-2 py-0.5 rounded border border-amber-500/40">Pod Ativo</span>
+                        </div>
+                        <p class="text-xs text-slate-300 mb-3">
+                            Python 3.12 - FastAPI <br>
+                            <span class="text-slate-400">Uvicorn na porta 8000 • Jinja2 • SQLAlchemy</span>
+                        </p>
+                        <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-[11px] text-slate-400 flex justify-between items-center">
+                            <span>SQL → porta 5432</span>
+                            <i class="fas fa-database text-blue-400"></i>
+                        </div>
+                    </div>
+
+                    <!-- Video Volume (PVC) -->
+                    <div class="md:col-span-3 bg-emerald-950/30 border border-emerald-500/40 rounded-lg p-4 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 text-emerald-400 font-bold text-sm mb-2">
+                                <i class="fas fa-hdd"></i> Volume dos vídeos
+                            </div>
+                            <div class="text-xs font-mono text-emerald-300">PVC sistema-dev-uploads - 20 Gi</div>
+                            <div class="text-[11px] text-slate-400 mt-2">
+                                montado em <span class="font-mono text-emerald-400">/data/uploads</span>
+                            </div>
+                        </div>
+                        <div class="text-[10px] text-slate-400 mt-3 pt-2 border-t border-emerald-900/50">
+                            (vídeos .mp4 / .webm enviados)
+                        </div>
+                    </div>
+
+                    <!-- Database Volume -->
+                    <div class="md:col-span-3 bg-emerald-950/30 border border-emerald-500/40 rounded-lg p-4">
+                        <div class="flex items-center gap-2 text-emerald-400 font-bold text-sm mb-2">
+                            <i class="fas fa-database"></i> Volume do banco
+                        </div>
+                        <div class="text-xs font-mono text-emerald-300">PVC sistema-dev-db - 5 Gi</div>
+                        <div class="text-[11px] text-slate-400 mt-2">
+                            <span class="font-mono text-emerald-400">/var/lib/pgsql/data</span>
+                        </div>
+                    </div>
+
+                    <!-- Database Deployment -->
+                    <div class="md:col-span-6 bg-blue-950/30 border border-blue-500/40 rounded-lg p-4 flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 text-blue-400 font-bold text-sm">
+                                <i class="fas fa-server"></i> Banco de dados
+                            </div>
+                            <div class="text-xs font-mono text-slate-300">Deployment sistema-dev-db</div>
+                            <div class="text-xs text-blue-300 font-semibold mt-1">PostgreSQL 16</div>
+                        </div>
+                        <div class="bg-slate-900 border border-slate-800 p-2.5 rounded-lg text-right">
+                            <div class="text-[10px] text-slate-400">Service</div>
+                            <div class="text-xs font-mono text-blue-300">sistema-dev-db :5432</div>
+                        </div>
+                    </div>
+
+                    <!-- Secrets -->
+                    <div class="md:col-span-3 bg-amber-950/30 border border-amber-600/40 rounded-lg p-4">
+                        <div class="flex items-center gap-2 text-amber-400 font-bold text-sm mb-1">
+                            <i class="fas fa-key"></i> Secret
+                        </div>
+                        <div class="text-xs font-mono text-amber-300 mb-1">sistema-dev-secrets</div>
+                        <div class="text-[11px] text-slate-400">
+                            usuário e senha do banco, chave do login (SECRET_KEY), injetados nos dois pods
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Info Boxes Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+            
+            <!-- Box 1 -->
+            <div class="bg-slate-900/90 border border-blue-500/30 rounded-xl p-4">
+                <h3 class="text-blue-400 font-bold text-sm mb-2 flex items-center gap-2">
+                    <i class="fas fa-database"></i> No banco de dados (PostgreSQL)
+                </h3>
+                <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                    <li>Usuários, perfis e endereços (senha só em hash)</li>
+                    <li>Cursos, aulas e cultos: título, texto e link</li>
+                    <li>Acessos: quem assistiu, a quê e quando</li>
+                    <li>Perguntas ao pastor e as respostas</li>
+                    <li>Dados do mapa: latitude e longitude</li>
+                </ul>
+            </div>
+
+            <!-- Box 2 -->
+            <div class="bg-slate-900/90 border border-emerald-500/30 rounded-xl p-4">
+                <h3 class="text-emerald-400 font-bold text-sm mb-2 flex items-center gap-2">
+                    <i class="fas fa-folder-open"></i> Em arquivos (volume de 20 Gi)
+                </h3>
+                <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                    <li>Vídeos enviados (.mp4 / .webm) em <span class="font-mono text-emerald-300">/data/uploads</span></li>
+                    <li>No banco fica só o caminho do arquivo</li>
+                    <li>Links do YouTube: só o link é guardado</li>
+                    <li>Fotos e CSS do site: dentro da imagem do app</li>
+                </ul>
+            </div>
+
+            <!-- Box 3 -->
+            <div class="bg-slate-900/90 border border-amber-500/30 rounded-xl p-4">
+                <h3 class="text-amber-400 font-bold text-sm mb-2 flex items-center gap-2">
+                    <i class="fas fa-shield-alt"></i> Backup: copie os dois
+                </h3>
+                <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                    <li><b>Banco:</b> pg_dump do PostgreSQL</li>
+                    <li><b>Arquivos:</b> a pasta /data/uploads</li>
+                    <li>Só o banco não basta: sem os arquivos, as aulas com vídeo enviado quebram</li>
+                    <li>Guarde o Secret em lugar seguro</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- Tech Stack Footer -->
+        <div class="pt-4 border-t border-slate-800">
+            <div class="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-wider">Linguagens e tecnologias</div>
+            <div class="flex flex-wrap gap-2">
+                <span class="bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-200 flex items-center gap-2">
+                    <i class="fab fa-python text-amber-400"></i> Python 3.12 <span class="text-slate-500">backend</span>
+                </span>
+                <span class="bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-200 flex items-center gap-2">
+                    <i class="fas fa-bolt text-teal-400"></i> FastAPI <span class="text-slate-500">Uvicorn • API</span>
+                </span>
+                <span class="bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-200 flex items-center gap-2">
+                    <i class="fab fa-html5 text-orange-400"></i> HTML + Jinja2 <span class="text-slate-500">páginas</span>
+                </span>
+                <span class="bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-200 flex items-center gap-2">
+                    <i class="fab fa-js text-yellow-400"></i> JavaScript <span class="text-slate-500">Leaflet • Quill</span>
+                </span>
+                <span class="bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-200 flex items-center gap-2">
+                    <i class="fas fa-code text-cyan-400"></i> Tailwind CSS <span class="text-slate-500">visual do site</span>
+                </span>
+                <span class="bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-200 flex items-center gap-2">
+                    <i class="fas fa-database text-blue-400"></i> PostgreSQL 16 <span class="text-slate-500">banco de dados</span>
+                </span>
+                <span class="bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-200 flex items-center gap-2">
+                    <i class="fab fa-docker text-blue-400"></i> Docker <span class="text-slate-500">imagem do app</span>
+                </span>
+                <span class="bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-200 flex items-center gap-2">
+                    <i class="fas fa-cubes text-red-400"></i> OpenShift <span class="text-slate-500">YAML • Routes</span>
+                </span>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
